@@ -1,0 +1,71 @@
+// 첫풀이
+// 이중 for문이 불가능하다고 판단 -> map두개와 [] 연산자를 통해 구현했다.
+// O(n) * O(logN) 이라 가능하다고 판단했다.
+
+#include <string>
+#include <vector>
+#include <map>
+
+using namespace std;
+
+map<string, int> m1;
+map<int, string> m2;
+
+vector<string> solution(vector<string> players, vector<string> callings) 
+{
+    for (int i = 0; i < players.size(); ++i)
+    {
+        string str = players[i];
+        m1[str] = i;
+        m2[i] = str;
+    }
+
+    for (int i = 0; i < callings.size(); ++i)
+    {
+        string str = callings[i];
+        int cidx = m1[str];
+        int pidx = cidx - 1;
+
+        string cur = m2[cidx], prev = m2[pidx];
+
+        players[cidx] = prev; players[pidx] = cur;
+        m2[cidx] = prev; m2[pidx] = cur;
+        m1[cur] = pidx; m1[prev] = cidx;
+    }
+
+    return players;
+}
+
+
+
+// 개선 풀이
+
+#include <string>
+#include <vector>
+#include <map>
+
+using namespace std;
+
+map<string, int> m1;
+map<int, string> m2;
+
+vector<string> solution(vector<string> players, vector<string> callings) 
+{
+    vector<string> ret;
+    map<string, int> m;
+    for (int i = 0; i < players.size(); ++i) m[players[i]] = i;
+    int s1{}, s2{};
+    string str{};
+    for (int i = 0; i < callings.size(); ++i)
+    {
+        s2 = m[callings[i]];
+        s1 = s2 - 1;
+        m[players[s2]]--; m[players[s1]]++;
+        str = players[s2];
+        players[s2] = players[s1];
+        players[s1] = str;
+    }
+    ret = players;
+    return ret;
+}
+
