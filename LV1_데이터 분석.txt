@@ -1,0 +1,92 @@
+// 첫 풀이
+
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int sidx = 0;
+string str[4] = {"code", "date", "maximum", "remain"};
+struct st
+{
+    int c;
+    int d;
+    int m;
+    int r;
+};
+
+bool cmp(st a, st b)
+{
+    if (sidx == 0) return a.c < b.c;
+    else if (sidx == 1) return a.d < b.d;
+    else if (sidx == 2) return a.m < b.m;
+    else return a.r < b.r;
+}
+
+vector<vector<int>> solution(vector<vector<int>> data, string ext, int val_ext, string sort_by) 
+{
+    vector<vector<int>> ret;
+    int extIdx = 0;
+    for (int i = 0; i < 4; ++i) 
+    {
+        if (str[i] == ext) 
+            extIdx = i;
+        if (str[i] == sort_by)
+            sidx = i;
+    }
+
+    vector<st> tmp;
+    for (int i = 0; i < data.size(); ++i)
+    {
+        if (data[i][extIdx] <= val_ext) tmp.push_back(st{data[i][0], data[i][1], data[i][2], data[i][3]});
+    }
+
+    ret.resize(tmp.size());
+
+    sort(tmp.begin(), tmp.end(), cmp);
+    for (int i = 0; i < tmp.size(); ++i)
+    {
+        ret[i].push_back(tmp[i].c);
+        ret[i].push_back(tmp[i].d);
+        ret[i].push_back(tmp[i].m);
+        ret[i].push_back(tmp[i].r);
+    }
+
+    return ret;
+}
+
+
+
+
+
+// remove_if로 원소를 뒤로 다 밀고 erase를 통해 다 지운다. predicate는 람다를 통해 구현을 해준 코드
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <unordered_map>
+
+using namespace std;
+
+vector<vector<int>> solution(vector<vector<int>> data, string ext, int val_ext, string sort_by) 
+{
+    vector<vector<int>> answer;
+    unordered_map<string, int> name_to_idx;
+    name_to_idx["code"] = 0;
+    name_to_idx["date"] = 1;
+    name_to_idx["maximum"] = 2;
+    name_to_idx["remain"] = 3;
+
+    auto it = remove_if(data.begin(), data.end(), [idx=name_to_idx[ext], val_ext](const auto& row) 
+    {
+        return !(row[idx] < val_ext);
+    });
+    data.erase(it, data.end());
+
+    sort(data.begin(), data.end(), [idx=name_to_idx[sort_by]](const auto& row1, const auto& row2) {
+        return row1[idx] < row2[idx];
+    });
+    return data;
+}
+
+
