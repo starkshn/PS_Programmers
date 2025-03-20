@@ -1,0 +1,57 @@
+// 250320
+// 첫풀이
+// 방향을 매핑하는 아이디어
+
+#include <string>
+#include <vector>
+#include <map>
+using namespace std;
+
+vector<int> solution(vector<string> park, vector<string> routes) 
+{
+    vector<int> ret;
+    map<string, pair<int, int>> dirs;
+    dirs["N"] = {-1, 0}; dirs["S"] = {1, 0}; dirs["W"] = {0, -1}; dirs["E"] = {0, 1};
+    int r = -1, c = -1;
+    for (int i = 0; i < park.size(); ++i)
+    {
+        for (int j = 0; j < park[i].size(); ++j)
+        {
+            if (park[i][j] == 'S')
+            {
+                r = i; c = j;
+                break;
+            }
+        }
+        if (r != -1 && c != -1) break;
+    }
+
+    for (string str : routes)
+    {
+        auto dir = dirs[str.substr(0, 1)];
+        int moveCnt = atoi(str.substr(2).c_str());
+
+        int tr = r, tc = c;
+        bool flag = 1;
+        while (moveCnt--)
+        {
+            if (tr + dir.first < 0 || tr + dir.first >= park.size() || tc + dir.second < 0 || tc + dir.second >= park[0].size())
+            {
+                flag = 0;
+                break;
+            }
+            if (park[tr + dir.first][tc + dir.second] == 'X')
+            {
+                flag = 0; break;
+            }
+            tr = tr + dir.first; tc = tc + dir.second;
+        }
+        if (flag)
+        {
+            r = tr; c = tc;
+        }
+    }
+    ret.push_back(r);
+    ret.push_back(c);
+    return ret;
+}
